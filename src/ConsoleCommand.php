@@ -76,6 +76,12 @@ class ConsoleCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+    	declare(ticks=1);
+    	
+	    pcntl_signal(SIGTERM, [&$this, 'onTerminate']);
+        pcntl_signal(SIGINT, [&$this, 'onTerminate']);
+        //pcntl_signal(SIGHUP, [&$this, 'onRestart']);
+        
         if (!$this->beforeExecute($input, $output)) {
             return 1;
         }
@@ -90,6 +96,13 @@ class ConsoleCommand extends Command
         return 0;
     }
     
+    private function onTerminate()
+    {
+    	$this->beforeTerminate();
+    	$this->afterTerminate();
+		exit;
+    }
+    
     protected function beforeExecute(InputInterface $input, OutputInterface $output)
     {
         $this->setOutput($output);
@@ -101,6 +114,17 @@ class ConsoleCommand extends Command
     {
         $this->setOutput($output);
     }
+    
+    protected function beforeTerminate()
+    {
+	    echo "\n";
+    }
+    
+    protected function afterTerminate()
+    {
+    	$this->displayWarning("Command is terminated", "TERMINATED");
+    }
+
     
     
     
