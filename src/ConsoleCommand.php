@@ -96,7 +96,7 @@ class ConsoleCommand extends Command
         return 0;
     }
     
-    private function onTerminate()
+    protected function onTerminate()
     {
     	$this->beforeTerminate();
     	$this->afterTerminate();
