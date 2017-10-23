@@ -78,7 +78,7 @@ class ConsoleCommand extends Command
     {
     	declare(ticks=1);
     	
-	    pcntl_signal(SIGTERM, [&$this, 'onTerminate']);
+	pcntl_signal(SIGTERM, [&$this, 'onTerminate']);
         pcntl_signal(SIGINT, [&$this, 'onTerminate']);
         //pcntl_signal(SIGHUP, [&$this, 'onRestart']);
         
