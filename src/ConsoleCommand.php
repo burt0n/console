@@ -1,5 +1,5 @@
 <?php
-namespace Burt0n\Component;
+namespace Raketsky\Component;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
@@ -76,12 +76,12 @@ class ConsoleCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-    	declare(ticks=1);
-    	
-	pcntl_signal(SIGTERM, [&$this, 'onTerminate']);
-        pcntl_signal(SIGINT, [&$this, 'onTerminate']);
-        //pcntl_signal(SIGHUP, [&$this, 'onRestart']);
-        
+        if (function_exists('pcntl_signal')) {
+    	    declare(ticks=1);
+            pcntl_signal(SIGTERM, [&$this, 'onTerminate']);
+            pcntl_signal(SIGINT, [&$this, 'onTerminate']);
+            //pcntl_signal(SIGHUP, [&$this, 'onRestart']);
+        }
         if (!$this->beforeExecute($input, $output)) {
             return 1;
         }

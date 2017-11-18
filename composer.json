@@ -7,7 +7,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Burt0n\\Component\\": "src"
+			"Raketsky\\Component\\": "src"
 		}
 	},
 	"minimum-stability": "dev",
