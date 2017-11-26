@@ -96,11 +96,12 @@ class ConsoleCommand extends Command
         return 0;
     }
     
-    protected function onTerminate()
+    public function onTerminate()
     {
     	$this->beforeTerminate();
     	$this->afterTerminate();
-		exit;
+	
+        exit;
     }
     
     protected function beforeExecute(InputInterface $input, OutputInterface $output)
