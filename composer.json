@@ -1,7 +1,8 @@
 {
 	"name": "raketsky/console",
+	"description": "Help library to format console output",
 	"type": "library",
-	"license": "BSD",
+	"license": "MIT",
 	"require": {
 		"symfony/console": "^4.1"
 	},
