@@ -13,47 +13,47 @@ class ConsoleCommand extends Command
      * @var OutputInterface
      */
     private $output = null;
-    
+
     protected function setOutput(OutputInterface $output)
     {
         //$style = new OutputFormatterStyle(null, 'cyan', array('bold', 'blink'));
-        
+
         // default
         $style = new OutputFormatterStyle(null);
         $output->getFormatter()->setStyle('defaulttag', $style);
         $style = new OutputFormatterStyle(null);
         $output->getFormatter()->setStyle('defaulttext', $style);
-        
+
         // info
         $style = new OutputFormatterStyle(null, 'cyan', ['bold']);
         $output->getFormatter()->setStyle('infotag', $style);
         $style = new OutputFormatterStyle('cyan');
         $output->getFormatter()->setStyle('infotext', $style);
-        
+
         // success
         $style = new OutputFormatterStyle(null, 'green', ['bold']);
         $output->getFormatter()->setStyle('successtag', $style);
         $style = new OutputFormatterStyle('green');
         $output->getFormatter()->setStyle('successtext', $style);
-        
+
         // warning
         $style = new OutputFormatterStyle(null, 'yellow', ['bold']);
         $output->getFormatter()->setStyle('warningtag', $style);
         $style = new OutputFormatterStyle('yellow');
         $output->getFormatter()->setStyle('warningtext', $style);
-        
+
         // error
         $style = new OutputFormatterStyle(null, 'red', ['bold']);
         $output->getFormatter()->setStyle('errortag', $style);
         $style = new OutputFormatterStyle('red');
         $output->getFormatter()->setStyle('errortext', $style);
-        
+
         // important
         $style = new OutputFormatterStyle(null, 'magenta', ['bold']);
         $output->getFormatter()->setStyle('importanttag', $style);
         $style = new OutputFormatterStyle('magenta');
         $output->getFormatter()->setStyle('importanttext', $style);
-        
+
         $this->output = $output;
     }
 
@@ -87,86 +87,86 @@ class ConsoleCommand extends Command
         }
         $status = $this->onExecute($input, $output);
         $this->afterExecute($input, $output);
-        
+
         return $status;
     }
-    
+
     public function onExecute(InputInterface $input, OutputInterface $output)
     {
         return 0;
     }
-    
+
     public function onTerminate()
     {
     	$this->beforeTerminate();
     	$this->afterTerminate();
-	
+
         exit;
     }
-    
+
     protected function beforeExecute(InputInterface $input, OutputInterface $output)
     {
         $this->setOutput($output);
-        
+
         return true;
     }
-    
+
     protected function afterExecute(InputInterface $input, OutputInterface $output)
     {
         $this->setOutput($output);
     }
-    
+
     protected function beforeTerminate()
     {
 	    echo "\n";
     }
-    
+
     protected function afterTerminate()
     {
     	$this->displayWarning("Command is terminated", "TERMINATED");
     }
 
-    
-    
-    
+
+
+
     protected function display($message, $tag='', $nl=true)
     {
         $this->displayBase($message, $tag, $nl);
     }
-    
+
     protected function displayInfo($message, $tag='', $nl=true)
     {
         $this->displayBase($message, $tag, $nl, 'info');
     }
-    
+
     protected function displaySuccess($message, $tag='', $nl=true)
     {
         $this->displayBase($message, $tag, $nl, 'success');
     }
-    
+
     protected function displayWarning($message, $tag='', $nl=true)
     {
         $this->displayBase($message, $tag, $nl, 'warning');
     }
-    
+
     protected function displayError($message, $tag='', $nl=true)
     {
         $this->displayBase($message, $tag, $nl, 'error');
     }
-    
+
     protected function displayImportant($message, $tag='', $nl=true)
     {
         $this->displayBase($message, $tag, $nl, 'important');
     }
-    
+
     protected function displayBase($message, $tag='', $nl=true, $style='default')
     {
         $text = '';
         if ($tag) {
-            $text .= '<'.$style.'tag> '.strtoupper($tag).' </'.$style.'tag> ';
+            $text .= '<'.$style.'tag> '.mb_strtoupper($tag).' </'.$style.'tag> ';
         }
         $text .= '<'.$style.'text>'.$message.'</'.$style.'text>';
-        
+
         if ($nl) {
             $this->output->writeln($text);
         } else {
