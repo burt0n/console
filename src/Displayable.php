@@ -167,7 +167,7 @@ trait Displayable
 
         $text = '';
         if ($tag) {
-            $text .= '<'.$style.'tag> '.strtoupper($tag).' </'.$style.'tag> ';
+            $text .= '<'.$style.'tag> '.mb_strtoupper($tag).' </'.$style.'tag> ';
         }
         $text .= '<'.$style.'text>'.$message.'</'.$style.'text>';
 
