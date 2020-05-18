@@ -1,17 +1,15 @@
 <?php
 namespace Raketsky\Component;
 
+use App\Exceptions\RetryAttemptsLimitReachedException;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Trait Displayable
  *
  * @todo move somewhere?
- * @package App\Console
  */
 trait Displayable
 {
@@ -20,7 +18,7 @@ trait Displayable
      */
     //private $output = null;
 
-    protected function initColors()
+    protected function initColors(): void
     {
         //$style = new OutputFormatterStyle(null, 'cyan', array('bold', 'blink'));
 
@@ -68,9 +66,9 @@ trait Displayable
      *
      * @return mixed
      * @throws BindingResolutionException
-     * @throws \App\Exceptions\RetryAttemptsLimitReachedException
+     * @throws RetryAttemptsLimitReachedException
      */
-    public function handle()
+    public function handle(): ?int
     {
         if (function_exists('pcntl_signal') && function_exists('pcntl_async_signals')) {
             pcntl_async_signals(true);
@@ -89,7 +87,7 @@ trait Displayable
         return $status;
     }
 
-    public function onExecute()
+    public function onExecute(): ?int
     {
         return 0;
     }
@@ -102,24 +100,24 @@ trait Displayable
         exit;
     }
 
-    protected function beforeExecute()
+    protected function beforeExecute(): bool
     {
         //$this->setOutput();
 
         return true;
     }
 
-    protected function afterExecute()
+    protected function afterExecute(): void
     {
         //$this->setOutput();
     }
 
-    protected function beforeTerminate()
+    protected function beforeTerminate(): void
     {
 	    echo "\n";
     }
 
-    protected function afterTerminate()
+    protected function afterTerminate(): void
     {
     	$this->displayWarning("Command is terminated", "TERMINATED");
     }
@@ -127,39 +125,67 @@ trait Displayable
 
 
 
-    protected function displayAlert($message)
+    public function display(string $message, string $tag=''): void
     {
-        $this->display("\n");
-        $this->alert($message);
+        $this->displayBase($message, $tag, false);
+    }
+    public function displayLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true);
     }
 
-    protected function displayInfo($message, $tag='', $nl=true)
+    public function displayInfo(string $message, string $tag=''): void
     {
-        $this->display($message, $tag, $nl, 'info');
+        $this->displayBase($message, $tag, false, 'info');
+    }
+    public function displayInfoLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'info');
     }
 
-    protected function displaySuccess($message, $tag='', $nl=true)
+    public function displaySuccess(string $message, string $tag=''): void
     {
-        $this->display($message, $tag, $nl, 'success');
+        $this->displayBase($message, $tag, false, 'success');
+    }
+    public function displaySuccessLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'success');
     }
 
-    protected function displayWarning($message, $tag='', $nl=true)
+    public function displayWarning(string $message, string $tag=''): void
     {
-        $this->display($message, $tag, $nl, 'warning');
+        $this->displayBase($message, $tag, false, 'warning');
+    }
+    public function displayWarningLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'warning');
     }
 
-    protected function displayError($message, $tag='', $nl=true)
+    public function displayError(string $message, string $tag=''): void
     {
-        $this->display($message, $tag, $nl, 'error');
+        $this->displayBase($message, $tag, false, 'error');
+    }
+    public function displayErrorLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'error');
     }
 
-    protected function displayImportant($message, $tag='', $nl=true)
+    public function displayImportant(string $message, string $tag=''): void
     {
-        $this->display($message, $tag, $nl, 'important');
+        $this->displayBase($message, $tag, false, 'important');
+    }
+    public function displayImportantLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'important');
+    }
+
+    public function displayExecTime()
+    {
+        $this->displayImportantLn('Execution time (s): '.(microtime(true) - $this->startTime), 'EOF');
     }
 
     private $startTime = null;
-    protected function display($message, $tag='', $nl=true, $style='default')
+    protected function displayBase($message, $tag='', $nl=true, $style='default')
     {
         if ($this->startTime === null) {
             $this->startTime = microtime(true);
@@ -176,10 +202,5 @@ trait Displayable
         } else {
             $this->output->write($text);
         }
-    }
-
-    protected function displayExecTime()
-    {
-        $this->displayImportant('Execution time (s): '.(microtime(true) - $this->startTime), 'EOF');
     }
 }

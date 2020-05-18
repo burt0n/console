@@ -12,9 +12,22 @@ class ConsoleCommand extends Command
     /**
      * @var OutputInterface
      */
-    private $output = null;
+    protected $output = null;
 
-    protected function setOutput(OutputInterface $output)
+    /**
+     * @var InputInterface
+     */
+    protected $input = null;
+
+    protected function setInput(InputInterface $input): void
+    {
+        $this->input = $input;
+    }
+
+    /**
+     * @param OutputInterface $output
+     */
+    protected function setOutput(OutputInterface $output): void
     {
         //$style = new OutputFormatterStyle(null, 'cyan', array('bold', 'blink'));
 
@@ -74,7 +87,7 @@ class ConsoleCommand extends Command
      *
      * @see setCode()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         if (function_exists('pcntl_signal')) {
     	    declare(ticks=1);
@@ -91,7 +104,12 @@ class ConsoleCommand extends Command
         return $status;
     }
 
-    public function onExecute(InputInterface $input, OutputInterface $output)
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int|null
+     */
+    public function onExecute(InputInterface $input, OutputInterface $output): ?int
     {
         return 0;
     }
@@ -104,63 +122,95 @@ class ConsoleCommand extends Command
         exit;
     }
 
-    protected function beforeExecute(InputInterface $input, OutputInterface $output)
+    protected function beforeExecute(InputInterface $input, OutputInterface $output): bool
     {
+        $this->setInput($input);
         $this->setOutput($output);
 
         return true;
     }
 
-    protected function afterExecute(InputInterface $input, OutputInterface $output)
+    protected function afterExecute(InputInterface $input, OutputInterface $output): void
     {
-        $this->setOutput($output);
     }
 
-    protected function beforeTerminate()
+    protected function beforeTerminate(): void
     {
 	    echo "\n";
     }
 
-    protected function afterTerminate()
+    protected function afterTerminate(): void
     {
-    	$this->displayWarning("Command is terminated", "TERMINATED");
+    	$this->displayWarning('Command is terminated', 'TERMINATED');
     }
 
 
-
-
-    protected function display($message, $tag='', $nl=true)
+    public function display(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, $nl);
+        $this->displayBase($message, $tag, false);
+    }
+    public function displayLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true);
     }
 
-    protected function displayInfo($message, $tag='', $nl=true)
+    public function displayInfo(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, $nl, 'info');
+        $this->displayBase($message, $tag, false, 'info');
+    }
+    public function displayInfoLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'info');
     }
 
-    protected function displaySuccess($message, $tag='', $nl=true)
+    public function displaySuccess(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, $nl, 'success');
+        $this->displayBase($message, $tag, false, 'success');
+    }
+    public function displaySuccessLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'success');
     }
 
-    protected function displayWarning($message, $tag='', $nl=true)
+    public function displayWarning(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, $nl, 'warning');
+        $this->displayBase($message, $tag, false, 'warning');
+    }
+    public function displayWarningLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'warning');
     }
 
-    protected function displayError($message, $tag='', $nl=true)
+    public function displayError(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, $nl, 'error');
+        $this->displayBase($message, $tag, false, 'error');
+    }
+    public function displayErrorLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'error');
     }
 
-    protected function displayImportant($message, $tag='', $nl=true)
+    public function displayImportant(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, $nl, 'important');
+        $this->displayBase($message, $tag, false, 'important');
+    }
+    public function displayImportantLn(string $message, string $tag=''): void
+    {
+        $this->displayBase($message, $tag, true, 'important');
     }
 
-    protected function displayBase($message, $tag='', $nl=true, $style='default')
+    public function displayExecTime()
     {
+        $this->displayImportantLn('Execution time (s): '.(microtime(true) - $this->startTime), 'EOF');
+    }
+
+    private $startTime = null;
+    protected function displayBase(string $message, string $tag='', bool $nl=true, string $style='default'): void
+    {
+        if ($this->startTime === null) {
+            $this->startTime = microtime(true);
+        }
+
         $text = '';
         if ($tag) {
             $text .= '<'.$style.'tag> '.mb_strtoupper($tag).' </'.$style.'tag> ';
