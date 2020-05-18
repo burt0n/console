@@ -145,63 +145,75 @@ class ConsoleCommand extends Command
     }
 
 
-    public function display(string $message, string $tag=''): void
+    /**
+     * Display on the same line
+     *
+     * @param string $message
+     * @param string $tag
+     */
+    public function displaySl(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, false);
     }
-    public function displayLn(string $message, string $tag=''): void
+
+    /**
+     * Display on new line
+     * @param string $message
+     * @param string $tag
+     */
+    public function display(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, true);
     }
 
-    public function displayInfo(string $message, string $tag=''): void
+    public function displayInfoSl(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, false, 'info');
     }
-    public function displayInfoLn(string $message, string $tag=''): void
+    public function displayInfo(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, true, 'info');
     }
 
-    public function displaySuccess(string $message, string $tag=''): void
+    public function displaySuccessSl(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, false, 'success');
     }
-    public function displaySuccessLn(string $message, string $tag=''): void
+    public function displaySuccess(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, true, 'success');
     }
 
-    public function displayWarning(string $message, string $tag=''): void
+    public function displayWarningSl(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, false, 'warning');
     }
-    public function displayWarningLn(string $message, string $tag=''): void
+    public function displayWarning(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, true, 'warning');
     }
 
-    public function displayError(string $message, string $tag=''): void
+    public function displayErrorSl(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, false, 'error');
     }
-    public function displayErrorLn(string $message, string $tag=''): void
+    public function displayError(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, true, 'error');
     }
 
-    public function displayImportant(string $message, string $tag=''): void
+    public function displayImportantSl(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, false, 'important');
     }
-    public function displayImportantLn(string $message, string $tag=''): void
+    public function displayImportant(string $message, string $tag=''): void
     {
         $this->displayBase($message, $tag, true, 'important');
     }
 
     public function displayExecTime()
     {
-        $this->displayImportantLn('Execution time (s): '.(microtime(true) - $this->startTime), 'EOF');
+        $this->displayImportant('Execution time (s): '.(microtime(true) - $this->startTime), 'EOF');
     }
 
     private $startTime = null;
