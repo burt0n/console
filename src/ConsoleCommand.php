@@ -9,15 +9,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConsoleCommand extends Command
 {
-    /**
-     * @var OutputInterface
-     */
-    protected $output = null;
-
-    /**
-     * @var InputInterface
-     */
-    protected $input = null;
+    protected ?OutputInterface $output = null;
+    protected ?InputInterface $input = null;
+    private ?float $execStartTime = null;
 
     protected function setInput(InputInterface $input): void
     {
@@ -136,7 +130,7 @@ class ConsoleCommand extends Command
 
     protected function beforeTerminate(): void
     {
-	    echo "\n";
+	    echo PHP_EOL;
     }
 
     protected function afterTerminate(): void
@@ -216,11 +210,10 @@ class ConsoleCommand extends Command
         $this->displayImportant('Execution time (s): '.(microtime(true) - $this->startTime), 'EOF');
     }
 
-    private $startTime = null;
     protected function displayBase(string $message, string $tag='', bool $nl=true, string $style='default'): void
     {
-        if (null !== $this->startTime) {
-            $this->startTime = microtime(true);
+        if (null !== $this->execStartTime) {
+            $this->execStartTime = microtime(true);
         }
 
         $text = '';
