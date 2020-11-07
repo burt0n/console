@@ -4,12 +4,12 @@
 	"type": "library",
 	"license": "MIT",
 	"require": {
-		"php": ">=7.1",
-		"symfony/console": "^4.1|^5.0"
+		"php": ">=7.4",
+		"symfony/console": "*"
 	},
 	"autoload": {
 		"psr-4": {
-			"Raketsky\\Component\\": "src"
+			"Egosun\\Console\\": "src"
 		}
 	},
 	"minimum-stability": "dev",

@@ -1,5 +1,5 @@
 <?php
-namespace Raketsky\Component;
+namespace Egosun\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;

@@ -1,5 +1,5 @@
 <?php
-namespace Raketsky\Component;
+namespace Egosun\Console;
 
 use App\Exceptions\RetryAttemptsLimitReachedException;
 use Illuminate\Contracts\Container\BindingResolutionException;
