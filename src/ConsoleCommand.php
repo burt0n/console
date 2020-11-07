@@ -219,7 +219,7 @@ class ConsoleCommand extends Command
     private $startTime = null;
     protected function displayBase(string $message, string $tag='', bool $nl=true, string $style='default'): void
     {
-        if ($this->startTime === null) {
+        if (null !== $this->startTime) {
             $this->startTime = microtime(true);
         }
 
