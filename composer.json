@@ -1,5 +1,5 @@
 {
-	"name": "egosun/console",
+	"name": "raketsky/console",
 	"description": "Help library to format console output",
 	"type": "library",
 	"license": "MIT",
@@ -9,7 +9,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Egosun\\Console\\": "src"
+			"Raketsky\\Component\\Console\\": "src"
 		}
 	},
 	"minimum-stability": "dev",
