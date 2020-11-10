@@ -1,17 +1,29 @@
 <?php
 namespace Raketsky\Component\Console;
 
+use Raketsky\Component\Console\Display\Display;
+use Raketsky\Component\Console\Formatter\ConsoleOutputFormatter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConsoleCommand extends Command
 {
-    protected ?OutputInterface $output = null;
-    protected ?InputInterface $input = null;
-    private ?float $execStartTime = null;
+    /**
+     * @var null|OutputInterface
+     */
+    protected $output = null;
+
+    /**
+     * @var null|InputInterface
+     */
+    protected $input = null;
+
+    /**
+     * @var Display
+     */
+    protected $display = null;
 
     protected function setInput(InputInterface $input): void
     {
@@ -23,45 +35,11 @@ class ConsoleCommand extends Command
      */
     protected function setOutput(OutputInterface $output): void
     {
-        //$style = new OutputFormatterStyle(null, 'cyan', array('bold', 'blink'));
-
-        // default
-        $style = new OutputFormatterStyle(null);
-        $output->getFormatter()->setStyle('defaulttag', $style);
-        $style = new OutputFormatterStyle(null);
-        $output->getFormatter()->setStyle('defaulttext', $style);
-
-        // info
-        $style = new OutputFormatterStyle(null, 'cyan', ['bold']);
-        $output->getFormatter()->setStyle('infotag', $style);
-        $style = new OutputFormatterStyle('cyan');
-        $output->getFormatter()->setStyle('infotext', $style);
-
-        // success
-        $style = new OutputFormatterStyle(null, 'green', ['bold']);
-        $output->getFormatter()->setStyle('successtag', $style);
-        $style = new OutputFormatterStyle('green');
-        $output->getFormatter()->setStyle('successtext', $style);
-
-        // warning
-        $style = new OutputFormatterStyle(null, 'yellow', ['bold']);
-        $output->getFormatter()->setStyle('warningtag', $style);
-        $style = new OutputFormatterStyle('yellow');
-        $output->getFormatter()->setStyle('warningtext', $style);
-
-        // error
-        $style = new OutputFormatterStyle(null, 'red', ['bold']);
-        $output->getFormatter()->setStyle('errortag', $style);
-        $style = new OutputFormatterStyle('red');
-        $output->getFormatter()->setStyle('errortext', $style);
-
-        // important
-        $style = new OutputFormatterStyle(null, 'magenta', ['bold']);
-        $output->getFormatter()->setStyle('importanttag', $style);
-        $style = new OutputFormatterStyle('magenta');
-        $output->getFormatter()->setStyle('importanttext', $style);
-
         $this->output = $output;
+        $this->display = new Display($this->output);
+
+        $outputFormatter = new ConsoleOutputFormatter();
+        $outputFormatter->setOutputStyle($this->output);
     }
 
     /**
@@ -147,7 +125,7 @@ class ConsoleCommand extends Command
      */
     public function displaySl(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, false);
+        $this->display->displayBase($message, $tag, false);
     }
 
     /**
@@ -157,75 +135,56 @@ class ConsoleCommand extends Command
      */
     public function display(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, true);
+        $this->display->displayBase($message, $tag, true);
     }
 
     public function displayInfoSl(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, false, 'info');
+        $this->display->displayBase($message, $tag, false, 'info');
     }
     public function displayInfo(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, true, 'info');
+        $this->display->displayBase($message, $tag, true, 'info');
     }
 
     public function displaySuccessSl(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, false, 'success');
+        $this->display->displayBase($message, $tag, false, 'success');
     }
     public function displaySuccess(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, true, 'success');
+        $this->display->displayBase($message, $tag, true, 'success');
     }
 
     public function displayWarningSl(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, false, 'warning');
+        $this->display->displayBase($message, $tag, false, 'warning');
     }
     public function displayWarning(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, true, 'warning');
+        $this->display->displayBase($message, $tag, true, 'warning');
     }
 
     public function displayErrorSl(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, false, 'error');
+        $this->display->displayBase($message, $tag, false, 'error');
     }
     public function displayError(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, true, 'error');
+        $this->display->displayBase($message, $tag, true, 'error');
     }
 
     public function displayImportantSl(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, false, 'important');
+        $this->display->displayBase($message, $tag, false, 'important');
     }
     public function displayImportant(string $message, string $tag=''): void
     {
-        $this->displayBase($message, $tag, true, 'important');
+        $this->display->displayBase($message, $tag, true, 'important');
     }
 
     public function displayExecTime()
     {
-        $this->displayImportant('Execution time (s): '.(microtime(true) - $this->startTime), 'EOF');
-    }
-
-    protected function displayBase(string $message, string $tag='', bool $nl=true, string $style='default'): void
-    {
-        if (null !== $this->execStartTime) {
-            $this->execStartTime = microtime(true);
-        }
-
-        $text = '';
-        if ($tag) {
-            $text .= '<'.$style.'tag> '.mb_strtoupper($tag).' </'.$style.'tag> ';
-        }
-        $text .= '<'.$style.'text>'.$message.'</'.$style.'text>';
-
-        if ($nl) {
-            $this->output->writeln($text);
-        } else {
-            $this->output->write($text);
-        }
+        $this->displayImportant(sprintf('Execution time (s): %f', $this->display->getExecTime()), 'EOF');
     }
 }
